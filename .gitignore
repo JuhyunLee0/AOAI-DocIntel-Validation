@@ -1,0 +1,12 @@
+.env
+.streamlit/secrets.toml
+.venv
+.dockerignore
+.git
+
+test.py
+/backup
+
+/functions/__pycache__
+/services/__pycache__
+documents/temp.pdf

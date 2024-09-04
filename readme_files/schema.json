@@ -1,0 +1,32 @@
+{
+    "docTypes": {
+        "custom-docutment-intel-model": {
+            "fieldSchema": {
+                "apn_number": {
+                    "type": "number"
+                },
+                "borrower_name": {
+                    "type": "string"
+                },
+                "lender_name": {
+                    "type": "string"
+                },
+                "trustee": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "date"
+                }
+            },
+            "buildMode": "generative"
+        }
+    },
+    "modelId": "custom-docutment-intel-model",
+    "createdDateTime": "2024-09-04T13:14:26Z",
+    "expirationDateTime": "2026-09-04T13:14:26Z",
+    "apiVersion": "2024-07-31-preview",
+    "description": ""
+}
