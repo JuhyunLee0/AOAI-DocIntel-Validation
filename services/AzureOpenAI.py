@@ -16,55 +16,6 @@ client = AzureOpenAI(
     azure_endpoint=azure_openai_ep
 )
 
-def get_response_from_aoai(document_content: str):
-    """Get a response from the GPT-4o model"""
-
-    system_message = """
-    ### you are AI assistant that helps extract information from given context.
-    - context will be given by the user.
-    - you will extract the relevant information using this json schema:
-        ```json
-        {
-            "amount_of_consideration": {
-                "type": "number"
-            },
-            "borrower_name": {
-                "type": "string"
-            },
-            "trustor": {
-                "type": "string"
-            },
-            "apn_number": {
-                "type": "number"
-            },
-            "title_order_number": {
-                "type": "number"
-            }
-        }
-        ```
-    - if you are unable to extract the information, return JSON with the keys and empty strings or 0 as values.
-    """
-
-    messages = [
-        {"role": "system", "content": system_message},
-        {"role": "user", "content": document_content}
-    ]
-
-    # print(messages)
-
-    try:
-        response = client.chat.completions.create(
-            model=azure_openai_model, # The deployment name you chose when you deployed the GPT-35-Turbo or GPT-4 model.
-            messages=messages,
-            response_format={ "type": "json_object" },
-        )
-        response_message = response.choices[0].message
-        return response_message.content
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-    
-
 def get_response_from_aoai_with_schema(document_content: str, schema: str):
     """Get a JSON response from the GPT-4o model with schema"""
 

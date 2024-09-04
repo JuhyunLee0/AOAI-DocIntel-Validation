@@ -1,6 +1,6 @@
 import os
 import json
-from services.AzureOpenAI import get_response_from_aoai, get_response_from_aoai_with_schema
+from services.AzureOpenAI import get_response_from_aoai_with_schema
 from services.AzureAIDocIntel import get_response_from_ai_doc_intel, get_schema_from_model
 
 def get_data(target_file_path):
