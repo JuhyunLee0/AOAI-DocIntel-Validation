@@ -1,7 +1,7 @@
 import os
 import json
 from services.AzureOpenAI import get_response_from_aoai_with_schema
-from services.AzureAIDocIntel import get_response_from_ai_doc_intel, get_schema_from_model
+from services.AzureAIDocIntel import get_response_from_ai_doc_intel, get_schema_from_model, get_response_from_ai_doc_intel_with_default_layout_model_with_highocr
 
 def get_data(target_file_path):
     """
@@ -23,6 +23,51 @@ def get_data(target_file_path):
     content = analyze_result["content"]
     doc = analyze_result["documents"][0]
     fields = doc["fields"]
+
+    # getting response from openai with schema
+    aoai_resp = get_response_from_aoai_with_schema(content, json.dumps(schema))
+
+    if aoai_resp is None:
+        print("Unable to get response from OpenAI")
+        return None
+
+    aoai_resp_json = json.loads(aoai_resp)
+
+    data = []
+    for key, value in fields.items():
+        # create new dictionary
+        element = {
+            **value, # adding all existing values
+            "name": key,
+            "aoaiValue": aoai_resp_json[key],
+        }
+        data.append(element)
+    print(data)
+    return data
+
+def get_data_with_highocr(target_file_path):
+    """
+    This function is responsible for getting the data from doc intel and azure openai
+    """
+    # checking for custom schema first
+    schema = get_schema_from_model()
+    if schema is None:
+        print("Unable to get schema from Azure Doc Intel")
+        return None
+
+    # getting response from doc intel
+    analyze_result = get_response_from_ai_doc_intel(target_file_path)
+
+    if analyze_result is None:
+        print("Unable to analyze Document")
+        return None
+    
+    doc = analyze_result["documents"][0]
+    fields = doc["fields"]
+
+    # Getting content seperately with the high OCR confidence
+    highocr_result = get_response_from_ai_doc_intel_with_default_layout_model_with_highocr(target_file_path)
+    content = highocr_result["content"]
 
     # getting response from openai with schema
     aoai_resp = get_response_from_aoai_with_schema(content, json.dumps(schema))

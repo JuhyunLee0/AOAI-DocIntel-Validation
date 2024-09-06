@@ -8,7 +8,7 @@ from streamlit_pdf_viewer import pdf_viewer
 
 load_dotenv(override=True)
 
-from functions.get_data import get_data, get_test_data
+from functions.get_data import get_data, get_data_with_highocr, get_test_data
 
 # Set the page configuration
 st.set_page_config(page_title="AOAI DocIntel Validator", layout="wide")
@@ -29,7 +29,8 @@ def get_value_from_field(selected_field):
 
 def load_data(file_path):
     # FOR TESTING ONLY
-    # init_data = get_test_data(file_path)
+    # init_data = get_test_data(file_path) 
+    # init_data = get_data_with_highocr(file_path)
     init_data = get_data(file_path)
     # for each element in the data, add a userValue key
     for element in init_data:
