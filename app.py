@@ -15,6 +15,7 @@ st.set_page_config(page_title="AOAI DocIntel Validator", layout="wide")
 
 # this is static file path, you can change this to a dynamic file path
 file_path = os.path.join(os.getcwd(), "documents", "sample-deed-of-trust.pdf")
+pdf_path = os.path.join(os.getcwd(), "documents", "sample-deed-of-trust.pdf")
 
 # Function to grab the correct value from the selected field
 def get_value_from_field(selected_field):
@@ -46,6 +47,7 @@ data = st.session_state['data']
 
 # Function to highlight text in PDF with a red box
 def highlight_text_in_pdf(file_path, highlight_coords):
+    pdf_file = os.path.join(os.getcwd(), "documents", "sample-deed-of-trust.pdf")
     doc = fitz.open(file_path)
     for coord in highlight_coords:
         page = doc.load_page(coord['pageNumber'] - 1)
