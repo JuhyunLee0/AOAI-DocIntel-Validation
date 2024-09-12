@@ -1,41 +1,27 @@
 import streamlit as st
-import fitz  # PyMuPDF
 import os
 import json
 import pandas as pd
 from dotenv import load_dotenv
 from streamlit_pdf_viewer import pdf_viewer
+from PIL import Image, ImageDraw
 
 load_dotenv(override=True)
 
-from functions.get_data import get_data, get_data_with_highocr, get_test_data
+from functions.get_data import get_data, get_test_data, get_value_from_field
+from functions.create_highlight import highlight_pdf, highlight_img
+
+# this is static file path, you can change this to a dynamic file path
+file_name = "test.png"
+file_path = os.path.join(os.getcwd(), "documents", file_name)
 
 # Set the page configuration
 st.set_page_config(page_title="AOAI DocIntel Validator", layout="wide")
 
-# this is static file path, you can change this to a dynamic file path
-file_path = os.path.join(os.getcwd(), "documents", "sample-deed-of-trust.pdf")
-pdf_path = os.path.join(os.getcwd(), "documents", "sample-deed-of-trust.pdf")
-
-# Function to grab the correct value from the selected field
-def get_value_from_field(selected_field):
-    if selected_field['type'] == 'string':
-        return selected_field['valueString']
-    elif selected_field['type'] == 'number':
-        return str(selected_field['valueNumber'])
-    elif selected_field['type'] == 'date':
-        return selected_field['valueDate']
-    else:
-        return selected_field['content']
-
+# loading data from various azure doc intel resources and azure openai
 def load_data(file_path):
-    # FOR TESTING ONLY
-    # init_data = get_test_data(file_path) 
-    # init_data = get_data_with_highocr(file_path)
+    # init_data = get_test_data(file_path) # for testing
     init_data = get_data(file_path)
-    # for each element in the data, add a userValue key
-    for element in init_data:
-        element['userValue'] = get_value_from_field(element)
     return init_data
 
 # store the data in the session state
@@ -43,26 +29,6 @@ if 'data' not in st.session_state:
     st.session_state['data'] = load_data(file_path)
 
 data = st.session_state['data']
-
-
-# Function to highlight text in PDF with a red box
-def highlight_text_in_pdf(file_path, highlight_coords):
-    pdf_file = os.path.join(os.getcwd(), "documents", "sample-deed-of-trust.pdf")
-    doc = fitz.open(file_path)
-    for coord in highlight_coords:
-        page = doc.load_page(coord['pageNumber'] - 1)
-        rect = fitz.Rect(coord['polygon'][0] * 72, coord['polygon'][1] * 72, coord['polygon'][4] * 72, coord['polygon'][5] * 72)
-        annot = page.add_rect_annot(rect)
-        annot.set_colors(stroke=(1, 0, 0))  # Red color
-        annot.set_border(width=2)  # Border width
-        annot.update()
-    highlighted_file_path = "documents/temp.pdf"
-    try:
-        doc.save(highlighted_file_path)
-    except Exception as e:
-        print(f"Error saving PDF: {e}")
-    return highlighted_file_path
-
 
 # Streamlit app
 st.title("AOAI Document Intelligence Validator")
@@ -97,12 +63,11 @@ with col1:
         selected_field['userValue'] = user_value
 
     # Prepare data for DataFrame
-    value_from_doc_intel = get_value_from_field(selected_field)
     low_confidence = selected_field['confidence'] < 0.8
-    value_differs = value_from_doc_intel != str(selected_field['aoaiValue'])
+    value_differs = selected_field["genaiDocIntelValue"] != str(selected_field['aoaiValue'])
     field_info = {
-        "Label": ["Schema Given Name", "Confidence", "Value from Doc Intel", "Value from AOAI", "Content", "User given Value"],
-        "Value": [selected_field['name'], selected_field['confidence'], value_from_doc_intel, selected_field['aoaiValue'], selected_field['content'], selected_field.get('userValue', '')]
+        "Label": ["Schema Given Name", "Confidence From Doc Intel", "Similarity Score", "Value from Doc Intel", "Value from AOAI", "Content", "User given Value"],
+        "Value": [selected_field['name'], selected_field['confidence'], selected_field["similarityScore"], selected_field["genaiDocIntelValue"], selected_field['aoaiValue'], selected_field['content'], selected_field.get('userValue', '')]
     }
 
     df = pd.DataFrame(field_info)
@@ -111,8 +76,13 @@ with col1:
     df['Value'] = df['Value'].astype(str)
 
     def highlight_style(row):
-        if row['Label'] == 'Confidence':
+        if row['Label'] == 'Confidence From Doc Intel':
             if low_confidence:
+                return ['color: red'] * len(row)
+            else:
+                return ['color: green'] * len(row)
+        if row['Label'] == 'Similarity Score':
+            if selected_field["similarityScore"] < 0.95:
                 return ['background-color: red'] * len(row)
             else:
                 return ['background-color: green'] * len(row)
@@ -130,12 +100,22 @@ with col1:
 selectedBoundingRegions = selected_field['boundingRegions']
 box_coords = selectedBoundingRegions[0]['polygon']
 highlight_coords = selected_field['boundingRegions']
-highlighted_file_path = highlight_text_in_pdf(file_path, highlight_coords)
+highlighted_file_path = None
+if file_path.endswith(".pdf"):
+    highlighted_file_path = highlight_pdf(file_path, highlight_coords)
+elif file_path.endswith(".png"):
+    highlighted_file_path = highlight_img(file_path, highlight_coords)
 
 # Display PDF on the right side
 with col2:
-    st.header("PDF Viewer")
-    pdf_viewer(input=highlighted_file_path, width=700)
+    if file_path.endswith(".pdf"):
+        st.header("PDF Viewer")
+        pdf_viewer(input=highlighted_file_path, width=700)
+    elif file_path.endswith(".jpg") or file_path.endswith(".jpeg") or file_path.endswith(".png"):
+        st.header("Image Viewer")
+        st.image(highlighted_file_path, width=700)    
+    else:
+        st.error("Invalid file format. Please upload a PDF or image file.")
 
 st.markdown("---")
 

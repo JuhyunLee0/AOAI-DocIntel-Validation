@@ -9,6 +9,7 @@ test.py
 
 /functions/__pycache__
 /services/__pycache__
-documents/temp.pdf
+documents/temp.*
+temp/*
 
-documents/Life_application.pdf
+documents/test.*
