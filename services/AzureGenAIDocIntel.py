@@ -31,7 +31,8 @@ def get_schema_from_model():
     try:
         response = requests.get(url, headers=headers, params=params)
         resp = response.json()
-        # print(resp)
+        print("Field Schema:")
+        print(json.dumps(resp, indent=4))
         field_schema = resp["docTypes"][genai_docintel_custom_model_name]["fieldSchema"]
         return field_schema
     except Exception as e:

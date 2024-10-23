@@ -46,6 +46,8 @@ def get_data(target_file_path):
         print("Unable to get schema from Azure Doc Intel")
         return None
 
+    # print(target_file_path)
+
     # getting response from doc intel
     analyze_result = get_response_from_genai_docintel(target_file_path)
 
@@ -82,7 +84,7 @@ def get_data(target_file_path):
             "similarityScore":calculate_similarity_score(genaiDocIntelValue, aoai_resp_json[key])
         }
         data.append(element)
-    print(data)
+
     return data
 
 
@@ -90,4 +92,10 @@ def get_test_data(file_path):
     """
     This function is responsible for getting the test data as a json
     """
-    return [{'type': 'string', 'valueString': 'Dallas', 'content': 'Dallas', 'boundingRegions': [{'pageNumber': 1, 'polygon': [935, 346, 1083, 346, 1083, 392, 935, 392]}], 'confidence': 0.977, 'spans': [{'offset': 347, 'length': 6}], 'name': 'proposed_primary_insured_city_address', 'aoaiValue': 'Dallas', 'genaiDocIntelValue': 'Dallas', 'userValue': 'Dallas', 'similarityScore': 1.0}, {'type': 'string', 'valueString': 'Mack B. Cuban', 'content': 'Mack B. Cuban', 'boundingRegions': [{'pageNumber': 1, 'polygon': [426.68155, 305.15015, 823.9909, 301.89352, 824.33606, 343.99725, 427.02667, 347.25388]}], 'confidence': 0.97, 'spans': [{'offset': 269, 'length': 13}], 'name': 'proposed_primary_insured_name', 'aoaiValue': 'Mark B. Cuban', 'genaiDocIntelValue': 'Mack B. Cuban', 'userValue': 'Mack B. Cuban', 'similarityScore': 0.9230769230769231}, {'type': 'string', 'valueString': 'M', 'content': 'M', 'boundingRegions': [{'pageNumber': 1, 'polygon': [1034, 423, 1058, 423, 1058, 445, 1034, 445]}], 'confidence': 0.871, 'spans': [{'offset': 397, 'length': 1}], 'name': 'proposed_primary_insured_sex', 'aoaiValue': 'M', 'genaiDocIntelValue': 'M', 'userValue': 'M', 'similarityScore': 1.0}, {'type': 'string', 'valueString': '444-82-6666', 'content': '444-82-6666', 'boundingRegions': [{'pageNumber': 1, 'polygon': [1209.6837, 301.5024, 1538, 299, 1538.3201, 340.99756, 1210.0038, 343.49997]}], 'confidence': 0.961, 'spans': [{'offset': 301, 'length': 11}], 'name': 'proposed_primary_insured_ssn', 'aoaiValue': '444-82-6666', 'genaiDocIntelValue': '444-82-6666', 'userValue': '444-82-6666', 'similarityScore': 1.0}, {'type': 'string', 'valueString': 'TX', 'content': 'TX', 'boundingRegions': [{'pageNumber': 1, 'polygon': [385.8547, 408.5324, 440, 407, 441.15945, 447.9672, 387.01413, 449.4996]}], 'confidence': 0.971, 'spans': [{'offset': 362, 'length': 2}], 'name': 'proposed_primary_insured_state_address', 'aoaiValue': 'TX', 'genaiDocIntelValue': 'TX', 'userValue': 'TX', 'similarityScore': 1.0}, {'type': 'string', 'valueString': '991 Richmond St.', 'content': '991 Richmond St.', 'boundingRegions': [{'pageNumber': 1, 'polygon': [409.55106, 353.00458, 839.99603, 348.61227, 840.463, 394.37283, 410.018, 398.76514]}], 'confidence': 0.97, 'spans': [{'offset': 323, 'length': 16}], 'name': 'proposed_primary_insured_street_address', 'aoaiValue': '791 Richmond St.', 'genaiDocIntelValue': '991 Richmond St.', 'userValue': '991 Richmond St.', 'similarityScore': 0.9375}, {'type': 'string', 'valueString': '75201', 'content': '75201', 'boundingRegions': [{'pageNumber': 1, 'polygon': [500.6468, 415.50385, 639, 414, 639.35864, 446.9961, 501.00543, 448.49994]}], 'confidence': 0.977, 'spans': [{'offset': 376, 'length': 5}], 'name': 'proposed_primary_insured_zipcode_address', 'aoaiValue': '15201', 'genaiDocIntelValue': '75201', 'userValue': '75201', 'similarityScore': 0.8}]
+
+    test_json = os.path.join(os.getcwd(), "documents", "test.json")
+    with open(test_json, "r") as f:
+        data = json.load(f)
+        return data
+
+    return []

@@ -12,7 +12,7 @@ from functions.get_data import get_data, get_test_data, get_value_from_field
 from functions.create_highlight import highlight_pdf, highlight_img
 
 # this is static file path, you can change this to a dynamic file path
-file_name = "test.png"
+file_name = "employee_application.png"
 file_path = os.path.join(os.getcwd(), "documents", file_name)
 
 # Set the page configuration
