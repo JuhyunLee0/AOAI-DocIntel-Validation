@@ -9,4 +9,6 @@ test.py
 
 /functions/__pycache__
 /services/__pycache__
-documents/temp.pdf
+
+documents/test.*
+documents/schema.json
