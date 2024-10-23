@@ -1,5 +1,7 @@
 # AOAI-DocIntel-Validation
 
+⚠️ if you are coming from the [article](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/maximizing-data-extraction-precision-with-dual-llms-integration/ba-p/4236728), please refer to the [article branch](https://github.com/JuhyunLee0/AOAI-DocIntel-Validation/tree/article)
+
 <img src="readme_files/main.gif" alt="main image" width="800"/>
 
 This app leverages Azure OpenAI GPT4 model and Azure AI Studio Document Intelligence Model to do extraction and compare the output to get better accuracy on the extraction.
