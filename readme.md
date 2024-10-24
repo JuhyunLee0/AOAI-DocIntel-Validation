@@ -1,17 +1,31 @@
 # AOAI-DocIntel-Validation
 
-⚠️ if you are coming from the [article](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/maximizing-data-extraction-precision-with-dual-llms-integration/ba-p/4236728), please refer to the [article branch](https://github.com/JuhyunLee0/AOAI-DocIntel-Validation/tree/article)
+⚠️ There have been modification since the [article](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/maximizing-data-extraction-precision-with-dual-llms-integration/ba-p/4236728), please refer to the [article branch](https://github.com/JuhyunLee0/AOAI-DocIntel-Validation/tree/article) if you want to follow along with the article.
+
+----
 
 <img src="readme_files/main.gif" alt="main image" width="800"/>
 
-This app leverages Azure OpenAI GPT4 model and Azure AI Studio Document Intelligence Model to do extraction and compare the output to get better accuracy on the extraction.
+## Introduction
+
+This app leverages below services + human in the loop to maximize the content extraction from document.
+- Azure OpenAI
+- Azure AI Studio - Document Intelligence
+- Azure Document Intelligence Studio
+
+In this Sample Application, we will use Azure AI Studio - Document Extraction Preview to define the desired extraction schema, then perform analysis to extract the json object.
+
+At the same time, we are also leveraging the document intelligence studio to run High OCR capability to convert the image to the markdown format, then using the GPT model, extract the desired data.
+
+these two seperate data extraction results will then be compared for human evaluation as the last step, to insure that the extracted values are accurate to maximum degree.
 
 ## Requirements
 
-- python 3.11 or above
-- Azure OpenAI GPT4 deployment
-- Azure AI Studio Document Deployment with Generative Model
-    - for more detail look, please visit https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/document-field-extraction-with-generative-ai/ba-p/4222950
+- python 3.11 or above.
+- Azure OpenAI GPT4 deployment.
+- Azure Document Intelligence Service.
+- Azure AI Studio Document Deployment with Generative Model.
+    - for detail steps, please visit https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/document-field-extraction-with-generative-ai/ba-p/4222950
 
 ## Installation
 

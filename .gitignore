@@ -9,6 +9,11 @@ test.py
 
 /functions/__pycache__
 /services/__pycache__
+<<<<<<< HEAD
+documents/temp.*
+temp/*
+=======
+>>>>>>> 32675d467bd496bf147d331d32d2e716b4f1ae9d
 
 documents/test.*
 documents/schema.json
