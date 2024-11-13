@@ -58,7 +58,7 @@ def get_data(target_file_path):
     doc = analyze_result["documents"][0]
     fields = doc["fields"]
 
-    print("\n\n fields", fields)
+    #print("\n\n fields", fields)
 
     # getting conten from doc intel
     docintel_resp = get_response_from_docintel(target_file_path)
@@ -66,7 +66,7 @@ def get_data(target_file_path):
 
     # getting response from openai with schema
     aoai_resp = get_response_from_aoai_with_schema(content, json.dumps(schema))
-    print("\n\n aoai_resp", aoai_resp)
+    #print("\n\n aoai_resp", aoai_resp)
 
     if aoai_resp is None:
         print("Unable to get response from OpenAI")
@@ -80,8 +80,6 @@ def get_data(target_file_path):
         # Check if the value is a dictionary or list of dictionaries
         if value["type"] == "array":
             for i, item in enumerate(value["valueArray"]):
-                print("\n\n Item number:", i)
-                print("\n\n Item:", item)
                 sub_data = item["valueObject"]
                 # Extract each field in sub_data and process it individually
                 for sub_key, sub_value in sub_data.items():      
