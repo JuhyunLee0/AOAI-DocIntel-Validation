@@ -24,6 +24,8 @@ def calculate_similarity_score(val1, val2):
     :param val2: Second string.
     :return: Similarity score between 0.0 and 1.0.
     """
+    val1 = str(val1)
+    val2 = str(val2)
     # Compute the Levenshtein distance
     distance = Levenshtein.distance(val1, val2)
     
@@ -46,8 +48,6 @@ def get_data(target_file_path):
         print("Unable to get schema from Azure Doc Intel")
         return None
 
-    # print(target_file_path)
-
     # getting response from doc intel
     analyze_result = get_response_from_genai_docintel(target_file_path)
 
@@ -58,12 +58,15 @@ def get_data(target_file_path):
     doc = analyze_result["documents"][0]
     fields = doc["fields"]
 
+    print("\n\n fields", fields)
+
     # getting conten from doc intel
     docintel_resp = get_response_from_docintel(target_file_path)
     content = docintel_resp["content"]
 
     # getting response from openai with schema
     aoai_resp = get_response_from_aoai_with_schema(content, json.dumps(schema))
+    print("\n\n aoai_resp", aoai_resp)
 
     if aoai_resp is None:
         print("Unable to get response from OpenAI")
@@ -73,17 +76,37 @@ def get_data(target_file_path):
 
     data = []
     for key, value in fields.items():
-        # create new dictionary
-        genaiDocIntelValue = get_value_from_field(value)
-        element = {
-            **value, # adding all existing values
-            "name": key,
-            "aoaiValue": aoai_resp_json[key],
-            "genaiDocIntelValue": genaiDocIntelValue,
-            "userValue": genaiDocIntelValue,
-            "similarityScore":calculate_similarity_score(genaiDocIntelValue, aoai_resp_json[key])
-        }
-        data.append(element)
+        print("\n\n Key:", key)
+        # Check if the value is a dictionary or list of dictionaries
+        if value["type"] == "array":
+            for i, item in enumerate(value["valueArray"]):
+                print("\n\n Item number:", i)
+                print("\n\n Item:", item)
+                sub_data = item["valueObject"]
+                # Extract each field in sub_data and process it individually
+                for sub_key, sub_value in sub_data.items():      
+                    genaiDocIntelValue = get_value_from_field(sub_value)
+                    element = {
+                        **sub_value,
+                        "name": sub_key,
+                        "aoaiValue": aoai_resp_json[key][i][sub_key],
+                        "genaiDocIntelValue": genaiDocIntelValue,
+                        "userValue": genaiDocIntelValue,
+                        "similarityScore": calculate_similarity_score(genaiDocIntelValue, aoai_resp_json[key][i][sub_key])
+                    }
+                    data.append(element)
+        else:
+            # create new dictionary
+            genaiDocIntelValue = get_value_from_field(value)
+            element = {
+                **value, # adding all existing values
+                "name": key,
+                "aoaiValue": aoai_resp_json[key],
+                "genaiDocIntelValue": genaiDocIntelValue,
+                "userValue": genaiDocIntelValue,
+                "similarityScore":calculate_similarity_score(genaiDocIntelValue, aoai_resp_json[key])
+            }
+            data.append(element)
 
     return data
 
